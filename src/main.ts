@@ -5,16 +5,14 @@ import Pr0Service from './services/Pr0Service';
 import MusicService from './services/MusicService';
 import DatabaseService from './services/DatabaseService';
 import LogService from './services/LogService';
+import queue from 'queue';
 
-
-process.on('unhandledRejection', function (err) {
-  console.log(err);
-});
-
+const log = new LogService();
 dotenv.config();
+const q = queue();
+
 main();
 async function main() {
-  const log = new LogService();
 
   //const requester = NodeRequester.create("https://1fa20fb1-768a-401b-8e86-7b6c9f8ffe8b.mock.pstmn.io");
   const requester = NodeRequester.create();
@@ -38,43 +36,51 @@ async function main() {
 
     watcher.start(async () => {
       const Comments = await api.messages.getComments();
-      const messages = Comments.messages.filter(function (msg) {
+      const messages = Comments.messages.filter((msg) => {
         return msg.read == 0;
       })
       messages.forEach(async msg => {
-        const thumb = await pr0.resolveThumb(msg.thumb); //Hole mir die original URL zu dem Video
-        if (thumb !== false) {
-          const checkItem = await db.checkItem(msg.itemId); //Überpüft ob der Post bereits abgefragt wurde
-          if (!checkItem.empty && checkItem.data != null) {
-            log.debug("[Message] Found data in DB - Item: " + msg.itemId);
-            pr0.notifyUser(msg, true, checkItem.data); //Post wurde bereits abgefragt, antworte mit einer privaten Nachricht
-          } else if(checkItem.empty == null && checkItem.data == null) { //Post wurde noch nicht abgefragt
-            log.info("Start Download - Item: " + msg.itemId);
-            const downloadPath = await pr0.downloadItem(thumb.toString()); //Herunterladen des Videos
-            log.info("Start Convertion - Item: " + msg.itemId);
-            const musicPath = await music.convertToAudio(downloadPath); //Extrahieren der Audiospur aus dem Video
-            log.info("Start Identification - Item: " + msg.itemId);
-            const musicInfo = await music.identifyMusic(musicPath); //Musik in der Audiospur erkennen
-            if (musicInfo.status === "success" && musicInfo.result != null) { //Erfolgreich erkannt?
-              log.debug("[Kommentar] Found data - Item: " + msg.itemId);
-              await db.insertItem(msg.itemId, musicInfo); //Metadaten in die DB speichern
-              await pr0.commentMusicInfo(msg.itemId, msg.id, true, musicInfo); //Unter der Markierung mit den Metadaten kommentieren
-            } else { //Es wurden keine Metadaten erkannt
-              log.debug("[Kommentar] No data found - Item: " + msg.itemId);
-              await db.insertItem(msg.itemId); //Leere Metadaten in die DB speichern
-              await pr0.commentMusicInfo(msg.itemId, msg.id, false); //Benutzer per Kommentar benachrichtigen
+        q.push(async () => {
+          const thumb = await pr0.resolveThumb(msg.thumb); //Hole mir die original URL zu dem Video
+          if (thumb !== false) {
+            const checkItem = await db.checkItem(msg.itemId); //Überpüft ob der Post bereits abgefragt wurde
+            if (!checkItem.empty && checkItem.data != null) {
+              log.debug("[Message] Found data in DB - Item: " + msg.itemId);
+              pr0.notifyUser(msg, true, checkItem.data); //Post wurde bereits abgefragt, antworte mit einer privaten Nachricht
+            } else if (checkItem.empty == null && checkItem.data == null) { //Post wurde noch nicht abgefragt
+              log.info("Start Download - Item: " + msg.itemId);
+              const downloadPath = await pr0.downloadItem(thumb.toString()); //Herunterladen des Videos
+              log.info("Start Convertion - Item: " + msg.itemId);
+              const musicPath = await music.convertToAudio(downloadPath); //Extrahieren der Audiospur aus dem Video
+              log.info("Start Identification - Item: " + msg.itemId);
+              const musicInfo = await music.identifyMusic(musicPath); //Musik in der Audiospur erkennen
+              if (musicInfo.status === "success" && musicInfo.result != null) { //Erfolgreich erkannt?
+                log.debug("[Kommentar] Found data - Item: " + msg.itemId);
+                await db.insertItem(msg.itemId, musicInfo); //Metadaten in die DB speichern
+                await pr0.commentMusicInfo(msg.itemId, msg.id, true, musicInfo); //Unter der Markierung mit den Metadaten kommentieren
+              } else { //Es wurden keine Metadaten erkannt
+                log.debug("[Kommentar] No data found - Item: " + msg.itemId);
+                await db.insertItem(msg.itemId); //Leere Metadaten in die DB speichern
+                await pr0.commentMusicInfo(msg.itemId, msg.id, false); //Benutzer per Kommentar benachrichtigen
+              }
+            } else if (checkItem.empty && checkItem.data == null) { //Post wurde abgefragt, es konnten aber keine Daten gefunden werden.
+              log.debug("[Message]: Never found data - Item: " + msg.itemId);
+              await pr0.notifyUser(msg, false); //Benutzer per private Nachricht benachrichtigen
             }
-          } else if(checkItem.empty && checkItem.data == null) { //Post wurde abgefragt, es konnten aber keine Daten gefunden werden.
-            log.debug("[Message]: Never found data - Item: " + msg.itemId);
-            await pr0.notifyUser(msg, false); //Benutzer per private Nachricht benachrichtigen
+          } else {
+            //Es konnte keine originale URL gefunden werden oder es ist kein Video
+            await pr0.commentNoThumb(msg.itemId, msg.id); //Benutzer per Kommentar benachrichtigen
           }
-        } else {
-          //Es konnte keine originale URL gefunden werden oder es ist kein Video
-          await pr0.commentNoThumb(msg.itemId, msg.id); //Benutzer per Kommentar benachrichtigen
-        }
-
+          await music.deleteFiles(); //Lösche alle temporären Dateien
+        });
       });
-      await music.deleteFiles(); //Lösche alle temporären Dateien
+      q.start((err) => {
+        if (err) log.fatal(err);
+      })
     });
   }
 }
+
+q.on('success', () => {
+  log.debug('[Queue] Job done!')
+})
