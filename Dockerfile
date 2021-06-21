@@ -10,5 +10,7 @@ RUN yarn install
 WORKDIR /usr/src/app
 COPY . .
 RUN yarn run build
+# Create tmp dir
+RUN mkdir /usr/src/app/tmp
 
-CMD ["yarn", "start"]
+ENTRYPOINT ["yarn", "start"]
