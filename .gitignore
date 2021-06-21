@@ -4,6 +4,7 @@ logs
 .env
 npm-debug.log*
 
+tmp/
 # Dependencies
 node_modules/
 

@@ -7,8 +7,8 @@ import DatabaseService from './services/DatabaseService';
 import LogService from './services/LogService';
 import queue from 'queue';
 
-const log = new LogService();
 dotenv.config();
+const log = new LogService();
 const q = queue();
 
 main();
