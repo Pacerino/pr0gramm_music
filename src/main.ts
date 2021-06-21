@@ -49,9 +49,9 @@ async function main() {
               pr0.notifyUser(msg, true, checkItem.data); //Post wurde bereits abgefragt, antworte mit einer privaten Nachricht
             } else if (checkItem.empty == null && checkItem.data == null) { //Post wurde noch nicht abgefragt
               log.info("Start Download - Item: " + msg.itemId);
-              const downloadPath = await pr0.downloadItem(thumb.toString()); //Herunterladen des Videos
+              const downloadPath = await pr0.downloadItem(thumb.toString(), msg.itemId); //Herunterladen des Videos
               log.info("Start Convertion - Item: " + msg.itemId);
-              const musicPath = await music.convertToAudio(downloadPath); //Extrahieren der Audiospur aus dem Video
+              const musicPath = await music.convertToAudio(downloadPath, msg.itemId); //Extrahieren der Audiospur aus dem Video
               log.info("Start Identification - Item: " + msg.itemId);
               const musicInfo = await music.identifyMusic(musicPath); //Musik in der Audiospur erkennen
               if (musicInfo.status === "success" && musicInfo.result != null) { //Erfolgreich erkannt?
@@ -71,7 +71,7 @@ async function main() {
             //Es konnte keine originale URL gefunden werden oder es ist kein Video
             await pr0.messageNoThumb(msg.name, msg.itemId); //Benutzer per Kommentar benachrichtigen
           }
-          await music.deleteFiles(); //Lösche alle temporären Dateien
+          await music.deleteFiles(msg.itemId); //Lösche alle temporären Dateien
         });
       });
       q.start((err) => {

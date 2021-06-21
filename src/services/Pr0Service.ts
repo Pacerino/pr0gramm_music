@@ -24,8 +24,8 @@ class Pr0Service {
     });
   }
 
-  downloadItem(itemUrl: string): Promise<string> {
-    const path = './tmp/tmpfile.mp4';
+  downloadItem(itemUrl: string, itemID: number): Promise<string> {
+    const path = `./tmp/${itemID}.mp4`;
     return new Promise((resolve, reject) => {
       return needle.get(itemUrl, { output: path }, (err) => {
         if (err) reject(err);

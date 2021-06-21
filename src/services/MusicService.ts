@@ -16,9 +16,9 @@ class MusicService {
     };
   }
 
-  convertToAudio(pathToFile: string): Promise<string> {
+  convertToAudio(pathToFile: string, itemID: number): Promise<string> {
     return new Promise((resolve, reject) => {
-      const outputPath = "./tmp/tmpfile.mp3";
+      const outputPath = `./tmp/${itemID}.mp3`;
       ffmpeg(pathToFile).output(outputPath).on('end', function () {
         resolve(outputPath);
       }).on('error', function (err) {
@@ -43,8 +43,8 @@ class MusicService {
     });
   }
 
-  async deleteFiles(): Promise<void> {
-    await ['./tmp/tmpfile.mp3', './tmp/tmpfile.mp4'].map(file => new Promise<void>((resolve, reject) => {
+  async deleteFiles(itemID: number): Promise<void> {
+    await [`./tmp/${itemID}.mp3`, `./tmp/${itemID}.mp4`].map(file => new Promise<void>((resolve, reject) => {
       fs.stat(file, (exists) => {
         if (exists == null) {
           fs.unlink(file, err => {
