@@ -1094,10 +1094,10 @@ picomatch@^2.2.1, picomatch@^2.2.3:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.0.tgz#f1f061de8f6a4bf022892e2d128234fb98302972"
   integrity sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==
 
-pr0gramm-api@^3.3.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/pr0gramm-api/-/pr0gramm-api-3.5.0.tgz#32c1404774c22b9ad9e4ffb36092f7aaace1c349"
-  integrity sha512-Cqb62JykFjwTVJZrdwKRWr62+pZuAtk/6Rc2n7EwrwK7WGNWXG6Jeo70iA+XFBfMkftHQaQum7SlKtr+MEyVpQ==
+pr0gramm-api@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/pr0gramm-api/-/pr0gramm-api-3.5.1.tgz#fcdaae2e9072c23dffd94b2c728f64a6afefe9d1"
+  integrity sha512-ZwGUyQ2OMHKR71aWJA/hZdfLWt1Lm9b+QjmcPVvKd7ma6bTDbWojGY2HQrkG/CxOAojzDvSBFaqjpVo7zxoxbA==
   dependencies:
     "@types/node" "^15.12.2"
     needle "^2.6.0"

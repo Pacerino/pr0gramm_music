@@ -18,7 +18,7 @@ async function main() {
   const requester = NodeRequester.create();
   const api = Pr0grammAPI.create(requester);
 
-  const loginResponse = await api.user.login(process.env.PR0_USER, process.env.PR0_PASSWORD, "", "");
+  const loginResponse = await api.user.login(process.env.PR0_USER, process.env.PR0_PASSWORD);
   log.debug(loginResponse);
   if (!loginResponse.success) {
     log.error("Could not log in :(");
