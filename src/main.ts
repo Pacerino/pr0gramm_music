@@ -37,7 +37,7 @@ async function main() {
     watcher.start(async () => {
       const Comments = await api.messages.getComments();
       const messages = Comments.messages.filter((msg) => {
-        return msg.read == 0 && msg.message == "@Sauce";
+        return msg.read == 0 && (msg.message == "@Sauce" || msg.message == "@sauce");
       })
       messages.forEach(async msg => {
         q.push(async () => {
