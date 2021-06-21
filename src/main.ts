@@ -37,7 +37,7 @@ async function main() {
     watcher.start(async () => {
       const Comments = await api.messages.getComments();
       const messages = Comments.messages.filter((msg) => {
-        return msg.read == 0;
+        return msg.read == 0 && msg.message == "@Sauce";
       })
       messages.forEach(async msg => {
         q.push(async () => {
@@ -69,7 +69,7 @@ async function main() {
             }
           } else {
             //Es konnte keine originale URL gefunden werden oder es ist kein Video
-            await pr0.commentNoThumb(msg.itemId, msg.id); //Benutzer per Kommentar benachrichtigen
+            await pr0.messageNoThumb(msg.name, msg.itemId); //Benutzer per Kommentar benachrichtigen
           }
           await music.deleteFiles(); //Lösche alle temporären Dateien
         });

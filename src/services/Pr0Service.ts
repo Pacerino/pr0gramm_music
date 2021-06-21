@@ -83,9 +83,9 @@ class Pr0Service {
     }
   }
 
-  async commentNoThumb(itemId: number, replyTo: number): Promise<Pr0grammResponse> {
-    const message = `So wie es aussieht ist der Post kein Video`;
-    return await this.api.comments.post(itemId, message, replyTo);
+  async messageNoThumb(user: string, itemID: number): Promise<Pr0grammResponse> {
+    const message = `Du hast mich unter https://pr0gramm.com/new/${itemID} markiert, dazu gibt es leider kein Informationen!`;
+    return await this.api.messages.sendMessage(user, message);
   }
 
 }

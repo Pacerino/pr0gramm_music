@@ -22,4 +22,7 @@ export class Items {
     @Column({nullable: true})
     url: string;
 
+    @Column({nullable: true})
+    noData: number;
+
 }
