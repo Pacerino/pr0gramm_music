@@ -51,7 +51,7 @@ class Pr0Service {
     Hier ist ein Link: ${item.url}
     `;
     } else {
-      messageNotFound = `Hallo ${msg.itemId},
+      messageNotFound = `Hallo ${msg.name},
 
     Du hast bei https://pr0gramm.com/new/${msg.itemId} nach der Musik gefragt.
     Leider wurden keine Informationen gefunden.`;
