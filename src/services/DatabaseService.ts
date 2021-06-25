@@ -1,5 +1,5 @@
 import { Connection, ConnectionOptions, createConnection } from 'typeorm';
-import LogService from './LogService';
+import log from '../helper/log';
 import { Items } from '../entity/Items';
 
 export interface Result {
@@ -20,7 +20,6 @@ export interface musicInfo {
 class DatabaseService {
   private options: ConnectionOptions;
   private conn: Connection;
-  private log = new LogService();
   constructor(dbHost: string, dbPort: number, dbUser: string, dbPass: string, dbDefaultDB: string, logging = true) {
     this.options = {
       "name": "mariadb",
@@ -39,7 +38,7 @@ class DatabaseService {
   }
 
   async connect(): Promise<void> {
-    await createConnection(this.options).then((conn) => this.conn = conn).catch((err) => this.log.fatal(err));
+    await createConnection(this.options).then((conn) => this.conn = conn).catch((err) => log.fatal(err));
   }
 
   async checkItem(itemID: number): Promise<{ data: null | Items; empty: boolean; }> {
@@ -51,7 +50,7 @@ class DatabaseService {
   }
 
   async insertItem(itemID: number, data?: musicInfo): Promise<Items> {
-    if(!this.conn.isConnected) this.log.fatal("Database not connected!");
+    if(!this.conn.isConnected) log.fatal("Database not connected!");
     const item = new Items();
     if(data != undefined) {
       item.itemID = itemID;

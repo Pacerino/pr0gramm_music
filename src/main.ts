@@ -4,11 +4,10 @@ import WatchService from './services/WatchService';
 import Pr0Service from './services/Pr0Service';
 import MusicService from './services/MusicService';
 import DatabaseService from './services/DatabaseService';
-import LogService from './services/LogService';
+import log from './helper/log';
 import queue from 'queue';
 
 dotenv.config();
-const log = new LogService();
 const q = queue();
 
 main();
@@ -19,7 +18,7 @@ async function main() {
   const api = Pr0grammAPI.create(requester);
 
   const loginResponse = await api.user.login(process.env.PR0_USER, process.env.PR0_PASSWORD);
-  log.debug(loginResponse);
+  log.debug(JSON.stringify(loginResponse));
   if (!loginResponse.success) {
     log.error("Could not log in :(");
     if (loginResponse.ban !== null) {
@@ -75,7 +74,7 @@ async function main() {
         });
       });
       q.start((err) => {
-        if (err) log.fatal(err);
+        if (err) log.fatal(err.toString());
       })
     });
   }

@@ -2,12 +2,11 @@ import * as needle from 'needle';
 import { InboxComments, Pr0grammAPI, Pr0grammResponse } from 'pr0gramm-api';
 import { Items } from '../entity/Items';
 import { musicInfo } from './DatabaseService';
-import LogService from './LogService';
+import log from '../helper/log';
 
 class Pr0Service {
 
   private api: Pr0grammAPI;
-  private log = new LogService();
 
   constructor(api: Pr0grammAPI) {
     this.api = api;
@@ -19,7 +18,7 @@ class Pr0Service {
     return needle('get', thumbPath).then((response) => {
       if (response.statusCode == 404) return false;
       if (response.statusCode == 200) return thumbPath;
-      this.log.fatal("Error while getting real URL from thumbnail");;
+      log.fatal("Error while getting real URL from thumbnail");;
       return false;
     });
   }
@@ -61,7 +60,7 @@ class Pr0Service {
 
     return this.api.messages.sendMessage(msg.name, (found ? messageFound : messageNotFound))
       .catch((err) => {
-        this.log.fatal(err); return false
+        log.fatal(err); return false
       }).then(() => {
         return true;
       })
