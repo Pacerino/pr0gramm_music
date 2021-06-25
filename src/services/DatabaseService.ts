@@ -2,20 +2,51 @@ import { Connection, ConnectionOptions, createConnection } from 'typeorm';
 import log from '../helper/log';
 import { Items } from '../entity/Items';
 
-export interface Result {
-  artist: string;
-  title: string;
-  album: string;
-  release_date: string;
-  label: string;
-  timecode: string;
-  song_link: string;
+export interface ACRResponse {
+  result_type?: number;
+  cost_time?:   number;
+  status?:      Status;
+  metadata?:    Metadata;
 }
 
-export interface musicInfo {
-  status: string;
-  result: Result;
+export interface Metadata {
+  music?:         Music[];
+  timestamp_utc?: Date;
 }
+
+export interface Music {
+  external_ids?:      External;
+  artists?:           Album[];
+  genres?:            Album[];
+  title?:             string;
+  album?:             Album;
+  score?:             number;
+  duration_ms?:       number;
+  label?:             string;
+  play_offset_ms?:    number;
+  result_from?:       number;
+  contributors?:      Contributors;
+  acrid?:             string;
+  release_date?:      Date;
+  external_metadata?: unknown;
+}
+
+export interface Album {
+  name?: string;
+}
+
+export interface Contributors {
+  composers?: string[];
+  lyricists?: string[];
+}
+
+
+export interface Status {
+  code?:    number;
+  msg?:     string;
+  version?: string;
+}
+
 
 class DatabaseService {
   private options: ConnectionOptions;
@@ -49,15 +80,15 @@ class DatabaseService {
     return { data: res, empty: false }; //Metadaten sind vorhanden
   }
 
-  async insertItem(itemID: number, data?: musicInfo): Promise<Items> {
+  async insertItem(itemID: number, data: ACRResponse): Promise<Items> {
     if(!this.conn.isConnected) log.fatal("Database not connected!");
     const item = new Items();
-    if(data != undefined) {
+    if(data.status.code == 0) {
       item.itemID = itemID;
-      item.title = data.result.title;
-      item.album = data.result.album;
-      item.artist = data.result.artist;
-      item.url = data.result.song_link;
+      item.title = data.metadata.music[0].title;
+      item.album = data.metadata.music[0].album.name;
+      item.artist = data.metadata.music[0].artists[0].name;
+      item.url = `https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast`;
     } else {
       item.itemID = itemID;
       item.title = null;

@@ -1,7 +1,7 @@
 import * as needle from 'needle';
 import { InboxComments, Pr0grammAPI, Pr0grammResponse } from 'pr0gramm-api';
 import { Items } from '../entity/Items';
-import { musicInfo } from './DatabaseService';
+import { ACRResponse } from './DatabaseService';
 import log from '../helper/log';
 
 class Pr0Service {
@@ -66,14 +66,14 @@ class Pr0Service {
       })
   }
 
-  async commentMusicInfo(itemId: number, replyTo: number, found: boolean, data?: musicInfo): Promise<Pr0grammResponse> {
+  async commentMusicInfo(itemId: number, replyTo: number, found: boolean, data?: ACRResponse): Promise<Pr0grammResponse> {
     if (found) {
       const messageFound = `Es wurden folgende Informationen dazu gefunden:
-    Titel: ${data.result.title}
-    Album: ${data.result.album}
-    Artist: ${data.result.artist}
+    Titel: ${data.metadata.music[0].title}
+    Album: ${data.metadata.music[0].album.name}
+    Artist: ${data.metadata.music[0].artists[0].name}
 
-    Hier ist ein Link: ${data.result.song_link}
+    Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
     `;
       return await this.api.comments.post(itemId, messageFound, replyTo);
     } else {

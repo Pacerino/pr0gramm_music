@@ -29,7 +29,7 @@ async function main() {
   } else {
     const watcher = new WatchService();
     const pr0 = new Pr0Service(api);
-    const music = new MusicService(process.env.AUDD_KEY);
+    const music = new MusicService();
     const db = new DatabaseService(process.env.DB_HOST, Number.parseInt(process.env.DB_PORT), process.env.DB_USER, process.env.DB_PASS, process.env.DB_DATABASE, false);
     await db.connect();
 
@@ -53,13 +53,13 @@ async function main() {
               const musicPath = await music.convertToAudio(downloadPath, msg.itemId); //Extrahieren der Audiospur aus dem Video
               log.info("Start Identification - Item: " + msg.itemId);
               const musicInfo = await music.identifyMusic(musicPath); //Musik in der Audiospur erkennen
-              if (musicInfo.status === "success" && musicInfo.result != null) { //Erfolgreich erkannt?
+              if (musicInfo.status.code == 0) { //Erfolgreich erkannt?
                 log.debug("[Kommentar] Found data - Item: " + msg.itemId);
                 await db.insertItem(msg.itemId, musicInfo); //Metadaten in die DB speichern
                 await pr0.commentMusicInfo(msg.itemId, msg.id, true, musicInfo); //Unter der Markierung mit den Metadaten kommentieren
               } else { //Es wurden keine Metadaten erkannt
                 log.debug("[Kommentar] No data found - Item: " + msg.itemId);
-                await db.insertItem(msg.itemId); //Leere Metadaten in die DB speichern
+                await db.insertItem(msg.itemId, musicInfo); //Leere Metadaten in die DB speichern
                 await pr0.commentMusicInfo(msg.itemId, msg.id, false); //Benutzer per Kommentar benachrichtigen
               }
             } else if (checkItem.empty && checkItem.data == null) { //Post wurde abgefragt, es konnten aber keine Daten gefunden werden.
