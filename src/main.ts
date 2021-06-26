@@ -18,15 +18,14 @@ async function main() {
   const api = Pr0grammAPI.create(requester);
 
   const loginResponse = await api.user.login(process.env.PR0_USER, process.env.PR0_PASSWORD);
-  log.debug(JSON.stringify(loginResponse));
   if (!loginResponse.success) {
-    log.error("Could not log in :(");
+    log.error("Could not log in", {tags: { service: "PR0", action: "Login" } });
     if (loginResponse.ban !== null) {
-      log.error("You are banned. Reason:");
-      log.fatal(loginResponse.ban.reason);
+      log.error("You are banned. Reason: " + loginResponse.ban.reason, {tags: { service: "PR0", action: "Login" } });
       return;
     }
   } else {
+    log.info("Logged in", {tags: { service: "PR0", action: "Login" } });
     const watcher = new WatchService();
     const pr0 = new Pr0Service(api);
     const music = new MusicService();
@@ -44,37 +43,38 @@ async function main() {
           if (thumb !== false) {
             const checkItem = await db.checkItem(msg.itemId); //Überpüft ob der Post bereits abgefragt wurde
             if (!checkItem.empty && checkItem.data != null) {
-              log.debug("[Message] Found data in DB - Item: " + msg.itemId);
+              log.debug("Found data in DB ", {tags: { service: "DB", itemID: msg.itemId, action: "Comment" } });
               pr0.notifyUser(msg, true, checkItem.data); //Post wurde bereits abgefragt, antworte mit einer privaten Nachricht
             } else if (checkItem.empty == null && checkItem.data == null) { //Post wurde noch nicht abgefragt
-              log.info("Start Download - Item: " + msg.itemId);
+              log.info("Start Download", {tags: { service: "PR0", itemID: msg.itemId, action: "Download" } });
               const downloadPath = await pr0.downloadItem(thumb.toString(), msg.itemId); //Herunterladen des Videos
-              log.info("Start Convertion - Item: " + msg.itemId);
+              log.info("Start Convertion", {tags: { service: "ACR", itemID: msg.itemId, action: "Conversation" } });
               const musicPath = await music.convertToAudio(downloadPath, msg.itemId); //Extrahieren der Audiospur aus dem Video
-              log.info("Start Identification - Item: " + msg.itemId);
+              log.info("Start Identification", {tags: { service: "ACR", itemID: msg.itemId, action: "Identify" } });
               const musicInfo = await music.identifyMusic(musicPath); //Musik in der Audiospur erkennen
               if (musicInfo.status.code == 0) { //Erfolgreich erkannt?
-                log.debug("[Kommentar] Found data - Item: " + msg.itemId);
+                log.debug("Found data", {tags: { service: "PR0", itemID: msg.itemId, action: "Comment" } });
                 await db.insertItem(msg.itemId, musicInfo); //Metadaten in die DB speichern
                 await pr0.commentMusicInfo(msg.itemId, msg.id, true, musicInfo); //Unter der Markierung mit den Metadaten kommentieren
               } else { //Es wurden keine Metadaten erkannt
-                log.debug("[Kommentar] No data found - Item: " + msg.itemId);
+                log.debug("No data found", {tags: { service: "PR0", itemID: msg.itemId, action: "Comment" } });
                 await db.insertItem(msg.itemId, musicInfo); //Leere Metadaten in die DB speichern
                 await pr0.commentMusicInfo(msg.itemId, msg.id, false); //Benutzer per Kommentar benachrichtigen
               }
             } else if (checkItem.empty && checkItem.data == null) { //Post wurde abgefragt, es konnten aber keine Daten gefunden werden.
-              log.debug("[Message]: Never found data - Item: " + msg.itemId);
+              log.debug("Never found data", {tags: { service: "PR0", itemID: msg.itemId, action: "Message" } });
               await pr0.notifyUser(msg, false); //Benutzer per private Nachricht benachrichtigen
             }
           } else {
             //Es konnte keine originale URL gefunden werden oder es ist kein Video
+            log.debug("Found no video", {tags: { service: "PR0", itemID: msg.itemId, action: "Message" } });
             await pr0.messageNoThumb(msg.name, msg.itemId); //Benutzer per Kommentar benachrichtigen
           }
           await music.deleteFiles(msg.itemId); //Lösche alle temporären Dateien
         });
       });
       q.start((err) => {
-        if (err) log.fatal(err.toString());
+        if (err) log.error(err.toString());
       })
     });
   }

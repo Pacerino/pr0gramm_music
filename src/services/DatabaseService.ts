@@ -69,7 +69,7 @@ class DatabaseService {
   }
 
   async connect(): Promise<void> {
-    await createConnection(this.options).then((conn) => this.conn = conn).catch((err) => log.fatal(err));
+    await createConnection(this.options).then((conn) => this.conn = conn).catch((err) => log.error(err, {tags: { service: "DB", action: "Connect" } }));
   }
 
   async checkItem(itemID: number): Promise<{ data: null | Items; empty: boolean; }> {
@@ -81,7 +81,7 @@ class DatabaseService {
   }
 
   async insertItem(itemID: number, data: ACRResponse): Promise<Items> {
-    if(!this.conn.isConnected) log.fatal("Database not connected!");
+    if(!this.conn.isConnected) log.error("Database not connected!", {tags: { service: "DB", action: "Connect" } });
     const item = new Items();
     if(data.status.code == 0) {
       item.itemID = itemID;

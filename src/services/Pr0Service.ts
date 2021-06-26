@@ -18,7 +18,7 @@ class Pr0Service {
     return needle('get', thumbPath).then((response) => {
       if (response.statusCode == 404) return false;
       if (response.statusCode == 200) return thumbPath;
-      log.fatal("Error while getting real URL from thumbnail");;
+      log.error("Error while getting real URL from thumbnail", {tags: { service: "PR0", action: "Resolve" } });;
       return false;
     });
   }
@@ -60,7 +60,7 @@ class Pr0Service {
 
     return this.api.messages.sendMessage(msg.name, (found ? messageFound : messageNotFound))
       .catch((err) => {
-        log.fatal(err); return false
+        log.error(err, {tags: { service: "PR0", action: "Message" } }); return false
       }).then(() => {
         return true;
       })
