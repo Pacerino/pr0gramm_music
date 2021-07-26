@@ -69,11 +69,10 @@ class Pr0Service {
   async commentMusicInfo(itemId: number, replyTo: number, found: boolean, data?: ACRResponse): Promise<Pr0grammResponse> {
     if (found) {
       const messageFound = `Es wurden folgende Informationen dazu gefunden:
-    Titel: ${data.metadata.music[0].title}
-    Album: ${data.metadata.music[0].album.name}
-    Artist: ${data.metadata.music[0].artists[0].name}
+      ${data.metadata.music[0].title} - ${data.metadata.music[0].artists[0].name}
+      Aus dem Album: ${data.metadata.music[0].album.name}
 
-    Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
+      Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
     `;
       return await this.api.comments.post(itemId, messageFound, replyTo);
     } else {
@@ -83,7 +82,9 @@ class Pr0Service {
   }
 
   async messageNoThumb(user: string, itemID: number): Promise<Pr0grammResponse> {
-    const message = `Du hast mich unter https://pr0gramm.com/new/${itemID} markiert, dazu gibt es leider kein Informationen!`;
+    const message = `Hallo ${user},
+    
+    du hast mich unter https://pr0gramm.com/new/${itemID} markiert, dazu gibt es leider keine Informationen!`;
     return await this.api.messages.sendMessage(user, message);
   }
 
