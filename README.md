@@ -39,10 +39,23 @@ Wird der Bot unter einem Video markiert, erkennt er automatisch die Musik in ein
 <!-- GETTING STARTED -->
 ## Getting Started
 
-### Prerequisites
+## Installation
+
+1. *Account auf [ACRCloud](https://www.acrcloud.com/de/) muss vorhanden sein*
+
+2. *MySql/MariaDB mit einer Datenbank muss vorhanden sein*
+
+3. `docker-compose.yml` anpasen
+
+4. Docker-Compose starten
+```sh
+docker-compose up -d
+```
+
+### Development Prerequisites
 
 - [ffmpeg](https://www.ffmpeg.org/) muss bereits installiert sein.
-- Account auf [Audd.io](https://audd.io) muss vorhanden sein
+- Account auf [ACRCloud](https://www.acrcloud.com/de/) muss vorhanden sein
 - MySql/MariaDB mit einer Datenbank
 - NodeJS LTS
 - Typescript
@@ -65,6 +78,10 @@ Wird der Bot unter einem Video markiert, erkennt er automatisch die Musik in ein
 3. `.env` Datei ausfüllen
 4. Starten
    ```sh
+   npm start
+   ```
+   oder
+   ```sh
    yarn start
    ```
 
@@ -73,19 +90,3 @@ Wird der Bot unter einem Video markiert, erkennt er automatisch die Musik in ein
 ## Usage
 
 Den Benutzernamen des Bots unter einem Video kommentieren.
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork das Projekt
-2. Erstelle eine Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Comitt deine Änderungen (`git commit -m 'Add some AmazingFeature'`)
-4. Pushe zur Branch (`git push origin feature/AmazingFeature`)
-5. Eröffne einen Pull Request
-
-
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
