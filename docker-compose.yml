@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  pr0music:
+    image: "reg.s-c.systems/pr0/pr0music:latest"
+    restart: unless-stopped
+    environment:
+        PR0_USER: Gamb
+        PR0_PASSWORD: SteffiPant123
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_USER: sauce
+        DB_PASS: SettiPant1234
+        DB_DATABASE: pr0gramm_music
+        ACR_ACCESS_KEY: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ACR_SECRET_KEY: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
