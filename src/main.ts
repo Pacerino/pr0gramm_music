@@ -34,9 +34,7 @@ async function main() {
 
     watcher.start(async () => {
       const Comments = await api.messages.getComments();
-      const messages = Comments.messages.filter((msg) => {
-        return msg.read == 0 && (msg.message == "@Sauce" || msg.message == "@sauce");
-      })
+      const messages = Comments.messages.filter(msg => msg.read == 0 && msg.message.toLowerCase().includes("@sauce"));
       messages.forEach(async msg => {
         q.push(async () => {
           const thumb = await pr0.resolveThumb(msg.thumb); //Hole mir die original URL zu dem Video
