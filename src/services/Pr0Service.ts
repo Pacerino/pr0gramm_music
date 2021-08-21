@@ -67,16 +67,20 @@ class Pr0Service {
   }
 
   async commentMusicInfo(itemId: number, replyTo: number, found: boolean, data?: ACRResponse): Promise<Pr0grammResponse> {
+
     if (found) {
       const messageFound = `Es wurden folgende Informationen dazu gefunden:
       ${data.metadata.music[0].title} - ${data.metadata.music[0].artists[0].name}
       Aus dem Album: ${data.metadata.music[0].album.name}
 
       Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
+      Zeitpunkt der Überprüfung ${this.getTimestamp}
     `;
       return await this.api.comments.post(itemId, messageFound, replyTo);
     } else {
-      const messageNotFound = `Es wurden keine Informationen zu dem Lied gefunden`;
+      const messageNotFound = `Es wurden keine Informationen zu dem Lied gefunden
+
+      Zeitpunkt der Überprüfung ${this.getTimestamp}`;
       return await this.api.comments.post(itemId, messageNotFound, replyTo);
     }
   }
@@ -86,6 +90,13 @@ class Pr0Service {
     
     du hast mich unter https://pr0gramm.com/new/${itemID} markiert, dazu gibt es leider keine Informationen!`;
     return await this.api.messages.sendMessage(user, message);
+  }
+
+  getTimestamp(): string {
+    const checkTime = new Date();
+    const date = new Intl.DateTimeFormat('de').format(checkTime);
+    const time = new Intl.DateTimeFormat('de', { hour: '2-digit',  minute: 'numeric' }).format(checkTime);
+    return `${date} um ${time}`
   }
 
 }
