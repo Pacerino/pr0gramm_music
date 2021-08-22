@@ -76,6 +76,7 @@ class Pr0Service {
       Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
       Zeitpunkt der Überprüfung ${this.getTimestamp}
     `;
+      await this.tagMusicinfo(itemId, data)
       return await this.api.comments.post(itemId, messageFound, replyTo);
     } else {
       const messageNotFound = `Es wurden keine Informationen zu dem Lied gefunden
@@ -83,6 +84,16 @@ class Pr0Service {
       Zeitpunkt der Überprüfung ${this.getTimestamp}`;
       return await this.api.comments.post(itemId, messageNotFound, replyTo);
     }
+  }
+
+  async tagMusicinfo(itemId: number, data: ACRResponse) : Promise<Pr0grammResponse> {
+    const titleAndArtist = `${data.metadata.music[0].artists[0].name} - ${data.metadata.music[0].title}`
+    const tags = [
+      data.metadata.music[0].title,
+      data.metadata.music[0].artists[0].name,
+      (titleAndArtist.length <= 32 ? titleAndArtist: null)
+    ]
+    return await this.api.tags.add(itemId, tags)
   }
 
   async messageNoThumb(user: string, itemID: number): Promise<Pr0grammResponse> {
