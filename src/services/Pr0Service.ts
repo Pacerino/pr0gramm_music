@@ -81,7 +81,7 @@ class Pr0Service {
     } else {
       const messageNotFound = `Es wurden keine Informationen zu dem Lied gefunden
 
-      Zeitpunkt der Überprüfung ${this.getTimestamp}`;
+      Zeitpunkt der Überprüfung ${this.getTimestamp()}`;
       return await this.api.comments.post(itemId, messageNotFound, replyTo);
     }
   }
