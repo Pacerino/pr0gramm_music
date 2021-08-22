@@ -74,7 +74,7 @@ class Pr0Service {
       Aus dem Album: ${data.metadata.music[0].album.name}
 
       Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
-      Zeitpunkt der Überprüfung ${this.getTimestamp}
+      Zeitpunkt der Überprüfung ${this.getTimestamp()}
     `;
       await this.tagMusicinfo(itemId, data)
       return await this.api.comments.post(itemId, messageFound, replyTo);
