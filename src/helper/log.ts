@@ -8,7 +8,10 @@ const printFormat = combine(timestamp(), prettyPrint(), colorize())
 dotenv.config();
 
 const sentryTransport = new Sentry({
-  level: process.env.LOG_LEVEL
+  level: process.env.LOG_LEVEL,
+  sentry: {
+    release: "pr0gramm_music@" + process.env.npm_package_version,
+  }
 });
 
 const logger = createLogger({
