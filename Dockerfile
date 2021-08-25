@@ -1,7 +1,9 @@
 FROM node:14.17.1-alpine
 ENV NODE_ENV=development
 # Add ffmpeg
-RUN apk add  --no-cache ffmpeg
+RUN apk add --no-cache ffmpeg
+# Add tzdata
+RUN apk add --no-cache tzdata
 # Install Dependencies
 WORKDIR /usr/src/app
 COPY ["package.json", "yarn.lock", "./"]
