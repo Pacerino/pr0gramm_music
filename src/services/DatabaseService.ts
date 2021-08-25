@@ -1,6 +1,8 @@
-import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection, InsertResult } from 'typeorm';
 import log from '../helper/log';
 import { Items } from '../entity/Items';
+import { Comments } from '../entity/Comments';
+import { InboxComments, InboxComments as pr0comments } from 'pr0gramm-api/lib/common-types';
 
 export interface ACRResponse {
   result_type?: number;
@@ -62,9 +64,8 @@ class DatabaseService {
       "database": dbDefaultDB,
       "logging": logging,
       synchronize: true,
-      entities: [Items]
+      entities: [Items, Comments]
     };
-
 
   }
 
@@ -98,6 +99,30 @@ class DatabaseService {
     }
     const itemRepository = this.conn.getRepository(Items);
     return await itemRepository.save(item);
+  }
+
+  async upsert(msg: InboxComments): Promise<InsertResult> {
+    return await this.conn.createQueryBuilder().insert().into(Comments).values(
+      {
+        type: msg.type,
+        id: msg.id,
+        itemId: msg.itemId,
+        image: msg.image,
+        thumb: msg.thumb,
+        flags: msg.flags,
+        name: msg.name,
+        senderId: msg.senderId,
+        collection: msg.collection,
+        created: msg.created.toString(),
+        message: msg.message,
+        read: msg.read
+      }
+    ).orIgnore().execute();
+  }
+
+  async insertMessage(messages: pr0comments[]): Promise<void> {
+    messages.map(async msg => await this.upsert(msg))
+    return
   }
 }
 
