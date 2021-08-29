@@ -92,7 +92,6 @@ class DatabaseService {
       item.title = data.metadata.music[0].title;
       item.album = data.metadata.music[0].album.name;
       item.artist = data.metadata.music[0].artists[0].name;
-      item.url = `https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast`;
       if(MoreMetdata.success) {
         item.entityUniqueId = MoreMetdata.data.entityUniqueID;
         item.userCountry = MoreMetdata.data.userCountry
@@ -111,8 +110,7 @@ class DatabaseService {
         // AppleMusic
         item.applemusicID = MoreMetdata.data.linksByPlatform.appleMusic.entityUniqueId
         item.applemusicURL = MoreMetdata.data.linksByPlatform.appleMusic.url
-        // TODO: URL Anpassen wenn mehr Metadaten gefunden wurden!
-        // item.url = `https://pacerino.github.io/pr0gramm_music_frontend/info/${data.metadata.music[0].acrid}`;
+        item.url = `https://pr0sauce.info/${data.metadata.music[0].acrid}`;
       } else {
         log.error(`Error while calling API: ${MoreMetdata.message}`, {tags: { service: "API", action: "GetMetadata" } })
         item.url = `https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast`;

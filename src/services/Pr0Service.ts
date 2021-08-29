@@ -73,7 +73,7 @@ class Pr0Service {
       ${data.metadata.music[0].title} - ${data.metadata.music[0].artists[0].name}
       Aus dem Album: ${data.metadata.music[0].album.name}
 
-      Hier ist ein Link: https://www.aha-music.com/${data.metadata.music[0].acrid}?utm_source=blast
+      Hier ist ein Link: https://pr0sauce.info/${data.metadata.music[0].acrid}
       Zeitpunkt der Überprüfung ${this.getTimestamp()}
     `;
       await this.tagMusicinfo(itemId, data.metadata.music[0].title, data.metadata.music[0].artists[0].name)
