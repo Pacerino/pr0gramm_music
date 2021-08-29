@@ -1,6 +1,6 @@
 import {Column, Entity, Generated, PrimaryColumn} from "typeorm";
 
-@Entity("Items")
+@Entity()
 export class Items {
 
     @PrimaryColumn("integer")
@@ -10,19 +10,19 @@ export class Items {
     @Column()
     itemID: number;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: () => null})
     title: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: () => null})
     album: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: () => null})
     artist: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: () => null})
     url: string;
 
-    @Column({nullable: true})
-    noData: number;
+    @Column()
+    acrID: string;
 
 }
