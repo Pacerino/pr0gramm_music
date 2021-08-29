@@ -22,7 +22,7 @@ export class Items {
     @Column({nullable: true, default: () => null})
     url: string;
 
-    @Column()
+    @Column({nullable: true, default: () => null})
     acrID: string;
 
 }
