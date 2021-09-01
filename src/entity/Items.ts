@@ -1,4 +1,4 @@
-import {Column, Entity, Generated, PrimaryColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Column, Entity, Generated, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Items {
@@ -6,15 +6,6 @@ export class Items {
     @PrimaryColumn("bigint", { width: 20, unsigned: true})
     @Generated()
     id: number;
-
-    @CreateDateColumn({ type: "datetime", default: () => "CURRENT_TIMESTAMP(3)" })
-    created_at: Date;
-
-    @UpdateDateColumn({ type: "datetime", default: () => "CURRENT_TIMESTAMP(3)", onUpdate: "CURRENT_TIMESTAMP(3)" })
-    updated_at: Date;
-
-    @Column({nullable: true, type: "datetime",  default: () => null})
-    deleted_at: Date
 
     @Column({type: "bigint", width: 20})
     itemID: number;
