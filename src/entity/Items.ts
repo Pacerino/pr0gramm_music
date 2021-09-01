@@ -7,13 +7,13 @@ export class Items {
     @Generated()
     id: number;
 
-    @CreateDateColumn({ type: "datetime", width: 3, default: () => "CURRENT_TIMESTAMP(3)" })
+    @CreateDateColumn({ type: "datetime", default: () => "CURRENT_TIMESTAMP(3)" })
     created_at: Date;
 
-    @UpdateDateColumn({ type: "datetime", width: 3, default: () => "CURRENT_TIMESTAMP(3)", onUpdate: "CURRENT_TIMESTAMP(3)" })
+    @UpdateDateColumn({ type: "datetime", default: () => "CURRENT_TIMESTAMP(3)", onUpdate: "CURRENT_TIMESTAMP(3)" })
     updated_at: Date;
 
-    @Column({nullable: true, type: "datetime", width: 3,  default: () => null})
+    @Column({nullable: true, type: "datetime",  default: () => null})
     deleted_at: Date
 
     @Column({type: "bigint", width: 20})
