@@ -36,6 +36,7 @@
     "queue": "^6.0.2",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.34",
+    "typeorm-naming-strategies": "^2.0.0",
     "winston": "^3.3.3",
     "winston-transport-sentry-node": "^1.0.2"
   }

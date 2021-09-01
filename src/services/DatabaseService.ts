@@ -1,8 +1,7 @@
-import { Connection, ConnectionOptions, createConnection, InsertResult } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import log from '../helper/log';
-import { Comments } from '../entity/Comments';
 import { MusicMetadata } from '../entity/Metadata';
-import { InboxComments, InboxComments as pr0comments } from 'pr0gramm-api/lib/common-types';
 import getMetadata from '../helper/api';
 
 export interface ACRResponse {
@@ -65,7 +64,8 @@ class DatabaseService {
       "database": dbDefaultDB,
       "logging": logging,
       synchronize: true,
-      entities: [Comments, MusicMetadata]
+      entities: [MusicMetadata],
+      namingStrategy: new SnakeNamingStrategy(),
     };
 
   }
@@ -93,11 +93,9 @@ class DatabaseService {
       item.album = data.metadata.music[0].album.name;
       item.artist = data.metadata.music[0].artists[0].name;
       if(MoreMetdata.success) {
-        item.entityUniqueId = MoreMetdata.data.entityUniqueID;
-        item.userCountry = MoreMetdata.data.userCountry
         // Soundcloud
         item.soundcloudID = MoreMetdata.data.linksByPlatform.soundcloud.entityUniqueId
-        item.soundcloudUrl = MoreMetdata.data.linksByPlatform.soundcloud.url
+        item.soundcloudURL = MoreMetdata.data.linksByPlatform.soundcloud.url
         // Spotify
         item.spotifyID = MoreMetdata.data.linksByPlatform.spotify.entityUniqueId
         item.spotifyURL = MoreMetdata.data.linksByPlatform.spotify.url
@@ -107,6 +105,9 @@ class DatabaseService {
         // YouTube
         item.youtubeID = MoreMetdata.data.linksByPlatform.youtube.entityUniqueId
         item.youtubeURL = MoreMetdata.data.linksByPlatform.youtube.url
+        // YouTube
+        item.deezerID = MoreMetdata.data.linksByPlatform.deezer.entityUniqueId
+        item.deezerURL = MoreMetdata.data.linksByPlatform.deezer.url
         // AppleMusic
         item.applemusicID = MoreMetdata.data.linksByPlatform.appleMusic.entityUniqueId
         item.applemusicURL = MoreMetdata.data.linksByPlatform.appleMusic.url
@@ -120,30 +121,6 @@ class DatabaseService {
     }
     const itemRepository = this.conn.getRepository(MusicMetadata);
     return await itemRepository.save(item);
-  }
-
-  async upsert(msg: InboxComments): Promise<InsertResult> {
-    return await this.conn.createQueryBuilder().insert().into(Comments).values(
-      {
-        type: msg.type,
-        id: msg.id,
-        itemId: msg.itemId,
-        image: msg.image,
-        thumb: msg.thumb,
-        flags: msg.flags,
-        name: msg.name,
-        senderId: msg.senderId,
-        collection: msg.collection,
-        created: msg.created.toString(),
-        message: msg.message,
-        read: msg.read
-      }
-    ).orIgnore().execute();
-  }
-
-  async insertMessage(messages: pr0comments[]): Promise<void> {
-    messages.map(async msg => await this.upsert(msg))
-    return
   }
 }
 
