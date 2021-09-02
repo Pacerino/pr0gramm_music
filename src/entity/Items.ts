@@ -17,6 +17,7 @@ export class Items {
     @Column({ type: "datetime",  width: 3, nullable: true, default: () => null})
     deleted_at: Date
 
+    @Index("idx_items_item_id")
     @Column({type: "bigint", width: 20})
     itemID: number;
 
