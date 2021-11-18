@@ -9,11 +9,6 @@ dotenv.config();
 const logger = createLogger({
   transports: [
     new transports.Console({level: 'debug', format: printFormat}),
-    new transports.Http({
-      host: process.env.WINSTON_HTTP,
-      port: Number(process.env.WINSTON_PORT),
-      path: "/"
-  })
   ]
 });
 
