@@ -1,0 +1,15 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: registry_user
+    password:
+      from_secret: registrylogin
+    repo: reg.s-c.systems/pr0/pr0music
+    tags: latest
+    registry: reg.s-c.systems
