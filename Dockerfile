@@ -13,6 +13,6 @@ WORKDIR /usr/src/app
 COPY . .
 RUN yarn run build
 # Create tmp dir
-RUN mkdir /usr/src/app/tmp
+RUN mkdir -p tmp
 
 ENTRYPOINT ["yarn", "start"]
