@@ -10,6 +10,7 @@ app "pr0music_bot" {
       use "docker" {
         image = "pr0/pr0music"
         tag   = "latest"
+        local = true
       }
     }
   }
