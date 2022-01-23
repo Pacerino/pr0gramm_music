@@ -1,6 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
+  <h1 align="center">!DEPRECATED! Use https://github.com/Pacerino/pr0music instead!</h1>
   <h3 align="center">pr0gramm_music</h3>
 
   <p align="center">
